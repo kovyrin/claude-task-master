@@ -309,7 +309,7 @@ async function _unifiedServiceRunner(serviceType, params) {
 		'AI service call failed for all configured roles.';
 
 	for (const currentRole of sequence) {
-		let providerName, modelId, apiKey, roleParams, providerFnSet, providerApiFn;
+		let providerName, modelId, apiKeyResult, roleParams, providerFnSet, providerApiFn;
 
 		try {
 			log('info', `New AI service call with role: ${currentRole}`);
@@ -381,11 +381,7 @@ async function _unifiedServiceRunner(serviceType, params) {
 
 			// 3. Resolve API Key (will throw if required and missing)
 			// Pass effectiveProjectRoot to _resolveApiKey
-			apiKey = _resolveApiKey(
-				providerName?.toLowerCase(),
-				session,
-				effectiveProjectRoot
-			);
+			apiKeyResult = _resolveApiKey(providerName?.toLowerCase(), session, effectiveProjectRoot);
 
 			// 4. Construct Messages Array
 			const messages = [];
@@ -420,15 +416,31 @@ async function _unifiedServiceRunner(serviceType, params) {
 			}
 
 			// 5. Prepare call parameters (using messages array)
-			const callParams = {
-				apiKey,
-				modelId,
-				maxTokens: roleParams.maxTokens,
-				temperature: roleParams.temperature,
-				messages,
-				...(serviceType === 'generateObject' && { schema, objectName }),
-				...restApiParams
-			};
+			// Handle both string API keys and object API keys (like for shopifyproxy)
+			let callParams;
+			if (typeof apiKeyResult === 'object' && apiKeyResult !== null) {
+				// For providers that return an object with apiKey and other properties
+				callParams = {
+					...apiKeyResult, // Spread all properties from apiKeyResult (apiKey, baseUrl, etc.)
+					modelId,
+					maxTokens: roleParams.maxTokens,
+					temperature: roleParams.temperature,
+					messages,
+					...(serviceType === 'generateObject' && { schema, objectName }),
+					...restApiParams
+				};
+			} else {
+				// For providers that just return a string API key
+				callParams = {
+					apiKey: apiKeyResult,
+					modelId,
+					maxTokens: roleParams.maxTokens,
+					temperature: roleParams.temperature,
+					messages,
+					...(serviceType === 'generateObject' && { schema, objectName }),
+					...restApiParams
+				};
+			}
 
 			// 6. Attempt the call with retries
 			const result = await _attemptProviderCallWithRetries(
