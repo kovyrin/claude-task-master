@@ -24,6 +24,7 @@ import * as google from '../../src/ai-providers/google.js';
 import * as openai from '../../src/ai-providers/openai.js';
 import * as xai from '../../src/ai-providers/xai.js';
 import * as openrouter from '../../src/ai-providers/openrouter.js';
+import * as shopifyProxy from '../../src/ai-providers/shopify-proxy.js';
 // TODO: Import other provider modules when implemented (ollama, etc.)
 
 // --- Provider Function Map ---
@@ -62,6 +63,12 @@ const PROVIDER_FUNCTIONS = {
 		generateText: openrouter.generateOpenRouterText,
 		streamText: openrouter.streamOpenRouterText,
 		generateObject: openrouter.generateOpenRouterObject
+	},
+	shopifyproxy: {
+		// ADD: Shopify Proxy entry
+		generateText: shopifyProxy.generateShopifyProxyText,
+		streamText: shopifyProxy.streamShopifyProxyText,
+		generateObject: shopifyProxy.generateShopifyProxyObject
 	}
 	// TODO: Add entries for ollama, etc. when implemented
 };
@@ -149,7 +156,8 @@ function _resolveApiKey(providerName, session, projectRoot = null) {
 		mistral: 'MISTRAL_API_KEY',
 		azure: 'AZURE_OPENAI_API_KEY',
 		openrouter: 'OPENROUTER_API_KEY',
-		xai: 'XAI_API_KEY'
+		xai: 'XAI_API_KEY',
+		shopifyproxy: 'SHOPIFY_PROXY_API_KEY'
 	};
 
 	// Double check this -- I have had to use an api key for ollama in the past
@@ -164,12 +172,29 @@ function _resolveApiKey(providerName, session, projectRoot = null) {
 		);
 	}
 
+	// Special handling for specific providers like shopifyproxy
+	if (providerName === 'shopifyproxy') {
+		const apiKey = resolveEnvVariable(envVarName, session, projectRoot);
+		const baseUrl = resolveEnvVariable('SHOPIFY_PROXY_BASE_URL', session, projectRoot) || 'https://proxy.shopify.ai';
+
+		if (!apiKey) {
+			throw new Error(
+				`Required API key ${envVarName} for provider '${providerName}' is not set in environment, session, or .env file.`
+			);
+		}
+
+		// Return an object for special providers that need additional parameters
+		return { apiKey, baseUrl };
+	}
+
+	// Standard API key resolution
 	const apiKey = resolveEnvVariable(envVarName, session, projectRoot);
 	if (!apiKey) {
 		throw new Error(
 			`Required API key ${envVarName} for provider '${providerName}' is not set in environment, session, or .env file.`
 		);
 	}
+
 	return apiKey;
 }
 

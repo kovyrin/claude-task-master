@@ -405,5 +405,31 @@
 			"allowed_roles": ["main", "fallback"],
 			"max_tokens": 32768
 		}
+	],
+	"shopifyproxy": [
+		{
+			"id": "anthropic:claude-3-7-sonnet-20250219",
+			"display_name": "Shopify Proxy - Claude 3.7 Sonnet",
+			"swe_score": 0.623,
+			"cost_per_1m_tokens": { "input": 0.0, "output": 0.0 },
+			"allowed_roles": ["main", "fallback", "research"],
+			"max_tokens": 120000
+		},
+		{
+			"id": "anthropic:claude-3-5-sonnet-20241022",
+			"display_name": "Shopify Proxy - Claude 3.5 Sonnet",
+			"swe_score": 0.49,
+			"cost_per_1m_tokens": { "input": 0.0, "output": 0.0 },
+			"allowed_roles": ["main", "fallback", "research"],
+			"max_tokens": 64000
+		},
+		{
+			"id": "gpt-4o",
+			"display_name": "Shopify Proxy - GPT-4o",
+			"swe_score": 0.332,
+			"cost_per_1m_tokens": { "input": 0.0, "output": 0.0 },
+			"allowed_roles": ["main", "fallback", "research"],
+			"max_tokens": 32000
+		}
 	]
 }
