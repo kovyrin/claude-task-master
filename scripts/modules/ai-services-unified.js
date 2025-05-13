@@ -175,7 +175,13 @@ function _resolveApiKey(providerName, session, projectRoot = null) {
 	// Special handling for specific providers like shopifyproxy
 	if (providerName === 'shopifyproxy') {
 		const apiKey = resolveEnvVariable(envVarName, session, projectRoot);
-		const baseUrl = resolveEnvVariable('SHOPIFY_PROXY_BASE_URL', session, projectRoot) || 'https://proxy.shopify.ai';
+		const baseUrl = resolveEnvVariable('SHOPIFY_PROXY_BASE_URL', session, projectRoot);
+
+		if (!baseUrl) {
+			throw new Error(
+				`Required base URL ${envVarName} for provider '${providerName}' is not set in environment, session, or .env file.`
+			);
+		}
 
 		if (!apiKey) {
 			throw new Error(

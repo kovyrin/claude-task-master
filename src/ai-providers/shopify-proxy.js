@@ -101,8 +101,7 @@ export async function generateShopifyProxyText({
   modelId,
   messages,
   maxTokens = 1000,
-  temperature = 0.7,
-  baseUrl = 'https://proxy.shopify.ai'
+  temperature = 0.7
 }) {
   log('debug', `Generating Shopify Proxy text with model: ${modelId}`);
 
@@ -155,8 +154,7 @@ export async function streamShopifyProxyText({
   modelId,
   messages,
   maxTokens = 1000,
-  temperature = 0.7,
-  baseUrl = 'https://proxy.shopify.ai'
+  temperature = 0.7
 }) {
   log('debug', `Streaming Shopify Proxy text with model: ${modelId}`);
 
@@ -211,8 +209,7 @@ export async function generateShopifyProxyObject({
   objectName = 'generated_object',
   maxTokens = 1000,
   temperature = 0.2,
-  maxRetries = 3,
-  baseUrl = 'https://proxy.shopify.ai'
+  maxRetries = 3
 }) {
   log('debug', `Generating Shopify Proxy object (${objectName}) with model: ${modelId}`);
 
