@@ -424,7 +424,7 @@
 			"max_tokens": 64000
 		},
 		{
-			"id": "gpt-4o",
+			"id": "openai:gpt-4o",
 			"display_name": "Shopify Proxy - GPT-4o",
 			"swe_score": 0.332,
 			"cost_per_1m_tokens": { "input": 0.0, "output": 0.0 },

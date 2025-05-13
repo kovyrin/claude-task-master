@@ -47,11 +47,6 @@ function parseModelId(modelId) {
     return { vendor: parts[0], modelName: parts[1] };
   }
 
-  // Handle legacy format or already parsed models
-  if (modelId.includes('claude')) {
-    return { vendor: 'anthropic', modelName: modelId };
-  }
-
   // Default to openai for unspecified formats
   return { vendor: 'openai', modelName: modelId };
 }
@@ -69,13 +64,14 @@ function getClient(vendor, apiKey, baseUrl) {
   }
 
   const vendorBaseUrl = `${baseUrl}/vendors/${vendor}`;
+  log('debug', `Using vendor base URL: ${vendorBaseUrl}`);
 
   if (vendor === 'anthropic') {
     return createAnthropic({
       apiKey,
       baseURL: `${vendorBaseUrl}/v1`,
       headers: {
-        'anthropic-version': '2023-06-01', // Required header for Anthropic API
+        'anthropic-version': '2023-06-01',
         'anthropic-beta': 'output-128k-2025-02-19'
       }
     });
